@@ -22,27 +22,43 @@ router.post('/', async (req, res) => {
 router.get('/', async (req, res) => {
     try {
         // Implement pagination
-        const page = parseInt(req.query.page, 10) || 1;
-        const limit = parseInt(req.query.limit, 10) || 20;
+        const page = Number(req.query.page) || 1;
+        const limit = Number(req.query.limit) || 20;
 
         // Implement search functionality
         const search = req.query.search || '';
 
+        // Classification filter (optional)
+        const classification = req.query.classification || '';
+
         // Calculate the skip value for pagination
         const skip = (page - 1) * limit;
 
-        // Define the search query
-        const query = {
-            Title: { $regex: search, $options: 'i' } // Case-insensitive search on Title field
-        };
+        let query = {};
+
+        // Add search criteria to the query if search term is provided
+        if (search) {
+            query.$or = [
+                { Title: { $regex: search, $options: 'i' } },
+                { Medium: { $regex: search, $options: 'i' } },
+                { Artist: { $regex: search, $options: 'i' } }
+            ];
+        }
+
+        // Add classification filter to the query if provided
+        if (classification) {
+            query.Classification = classification;
+        }
 
         // Fetch artworks based on search query and pagination
         const artworks = await Artwork.find(query)
             .skip(skip)
             .limit(limit);
 
-        const totalArtworks = await Artwork.countDocuments();
+        // Calculate total number of artworks matching the query for pagination
+        const totalArtworks = await Artwork.countDocuments(query);
 
+        // Send the response
         res.json({
             artworks,
             currentPage: page,

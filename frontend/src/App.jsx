@@ -7,16 +7,43 @@ function App() {
   const [artworks, setArtworks] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [search, setSearch] = useState("");
+  const [searchInput, setSearchInput] = useState('');
+  const [search, setSearch] = useState('');
+  const [classification, setClassification] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+
+  const classifications = [
+    { value: '', label: 'All classifications' },
+    { value: 'Architecture', label: 'Architecture' },
+    { value: 'Design', label: 'Design' },
+    { value: 'Drawing', label: 'Drawing' },
+    { value: 'Illustrated Book', label: 'Illustrated Book' },
+    { value: 'Painting', label: 'Painting' },
+    { value: 'Photograph', label: 'Photograph' },
+    { value: 'Print', label: 'Print' },
+    { value: 'Sculpture', label: 'Sculpture' },
+  ];
+
+  const handleSearchSubmit = (event) => {
+    event.preventDefault();
+    setSearch(searchInput.trim());
+    setCurrentPage(1);
+  };
 
   // Fetch artworks from the backend API when the component mounts or when currentPage or search changes
   useEffect(() => {
     const fetchArtworks = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`/api/artworks?page=${currentPage}&limit=20&search=${search}`);
+        const response = await axios.get('/api/artworks', {
+          params: {
+            page: currentPage,
+            limit: 20,
+            search,
+            classification,
+          },
+        });
         
         // Ensure that response.data.artworks is an array before setting state
         setArtworks(Array.isArray(response.data.artworks) ? response.data.artworks : []);
@@ -32,7 +59,7 @@ function App() {
     };
 
     fetchArtworks();
-  }, [currentPage, search]);
+  }, [currentPage, search, classification]);
 
   const formatArtist = (artist) => {
     if (Array.isArray(artist)) {
@@ -54,33 +81,53 @@ function App() {
         </div>
       </section>
 
-      <section className="search-bar" aria-label="Search artworks">
+      <form className="search-bar" aria-label="Search and filter artworks" onSubmit={handleSearchSubmit}>
         <label className="search-field">
           <span>Search the collection</span>
           <input
             type="search"
             placeholder="Search by title, artist, medium..."
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setCurrentPage(1);
-            }}
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
           />
         </label>
 
-        {search && (
+        <button className="search-submit" type="submit">
+          Search
+        </button>
+
+        <label className="classification-field">
+          <span>Classification</span>
+          <select
+            value={classification}
+            onChange={(e) => {
+              setClassification(e.target.value);
+              setCurrentPage(1);
+            }}
+          >
+            {classifications.map((item) => (
+              <option key={item.value || 'all'} value={item.value}>
+                {item.label}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        {(searchInput || search || classification) && (
           <button
             className="clear-search"
             type="button"
             onClick={() => {
+              setSearchInput('');
               setSearch('');
+              setClassification('');
               setCurrentPage(1);
             }}
           >
-            Clear
+            Clear filters
           </button>
         )}
-      </section>
+      </form>
 
       {loading && <p className="status-message">Loading artworks...</p>}
       {error && <p className="status-message error">{error}</p>}
