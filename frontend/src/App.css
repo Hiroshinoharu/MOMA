@@ -1,3 +1,4 @@
+/* Header and primary navigation */
 .site-header {
   position: sticky;
   top: 0;
@@ -64,6 +65,7 @@
   text-transform: none !important;
 }
 
+/* Page shell and hero banner */
 .catalogue-shell {
   width: min(1180px, calc(100% - 32px));
   margin: 0 auto;
@@ -116,6 +118,7 @@
   line-height: 1.35;
 }
 
+/* In-app About view */
 .about-page {
   padding: 64px 0;
 }
@@ -163,6 +166,7 @@
   line-height: 1.5;
 }
 
+/* Search, filter, and sort controls */
 .search-bar {
   margin: 22px 0;
   padding: 18px;
@@ -179,6 +183,7 @@
   gap: 12px;
 }
 
+/* Shared form controls and buttons */
 .search-field,
 .classification-field,
 .sort-field,
@@ -289,6 +294,7 @@
   color: var(--accent);
 }
 
+/* Add/edit artwork modal */
 .form-heading {
   display: flex;
   align-items: center;
@@ -321,7 +327,12 @@
   z-index: 20;
   display: grid;
   place-items: center;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  margin: 0;
   padding: 24px;
+  border: 0;
   background: rgba(20, 17, 15, 0.42);
 }
 
@@ -376,6 +387,7 @@
   grid-column: 1 / -1;
 }
 
+/* Results summary and artwork cards */
 .results-bar {
   display: flex;
   justify-content: space-between;
@@ -576,6 +588,7 @@ dd {
   color: #bf2c26;
 }
 
+/* Pagination */
 .pagination {
   display: flex;
   align-items: center;
@@ -621,6 +634,22 @@ dd {
   text-align: center;
 }
 
+/* Tablet layout */
+@media (max-width: 1100px) {
+  .search-bar {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .classification-field,
+  .sort-field {
+    grid-column: span 1;
+  }
+
+  .clear-search {
+    grid-column: 1 / -1;
+  }
+}
+
 @media (max-width: 900px) {
   .site-header,
   .site-nav {
@@ -629,6 +658,7 @@ dd {
   }
 
   .site-nav {
+    flex-wrap: wrap;
     gap: 12px;
   }
 
@@ -641,6 +671,10 @@ dd {
 
   .hero-visual {
     min-height: 220px;
+  }
+
+  .hero-content {
+    padding: 36px 0 18px;
   }
 
   .wide-field {
@@ -660,13 +694,69 @@ dd {
   }
 }
 
+/* Phone layout */
 @media (max-width: 560px) {
   .catalogue-shell {
     width: min(100% - 24px, 1180px);
   }
 
+  .site-header {
+    padding: 14px 16px;
+  }
+
+  .brand img {
+    width: 118px;
+  }
+
+  .site-nav {
+    width: 100%;
+  }
+
+  .site-nav button {
+    font-size: 12px;
+  }
+
   .catalogue-hero h1 {
     font-size: 42px;
+  }
+
+  .hero-visual {
+    min-height: 180px;
+  }
+
+  .search-bar,
+  .artwork-form-modal {
+    padding: 14px;
+  }
+
+  .modal-backdrop {
+    align-items: end;
+    padding: 12px;
+  }
+
+  .artwork-form-modal {
+    max-height: calc(100svh - 24px);
+  }
+
+  .artwork-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .artwork-card {
+    min-height: 0;
+  }
+
+  dl {
+    grid-template-columns: 1fr;
+  }
+
+  .card-actions {
+    justify-content: stretch;
+  }
+
+  .edit-button,
+  .delete-button {
+    flex: 1;
   }
 
   .results-bar span {

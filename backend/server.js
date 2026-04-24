@@ -20,6 +20,7 @@ mongoose.connect(process.env.MONGODB_URI)
 const artworkRoutes = require('./routes/artworkRoutes');
 app.use('/api/artworks', artworkRoutes);
 
+// Backend-served assignment page explaining how the application works.
 app.get('/about', (req, res) => {
     res.type('html').send(`
 <!doctype html>

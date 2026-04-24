@@ -7,6 +7,7 @@ const express = require('express');
 const router = express.Router();
 const Artwork = require('../models/Artwork');
 
+// Shared validation keeps create and update requests consistent.
 const validateArtwork = (body) => {
     const errors = [];
 
@@ -35,6 +36,7 @@ const validateArtwork = (body) => {
     return errors;
 };
 
+// Whitelist allowed sort modes so query params cannot sort by arbitrary fields.
 const sortOptions = {
     'title-asc': { Title: 1 },
     'title-desc': { Title: -1 },
@@ -72,6 +74,7 @@ router.get('/', async (req, res) => {
         // Classification filter (optional)
         const classification = req.query.classification || '';
 
+        // Empty sort keeps MongoDB's default order; known values apply explicit ordering.
         const sort = sortOptions[req.query.sort] || {};
 
         // Calculate the skip value for pagination

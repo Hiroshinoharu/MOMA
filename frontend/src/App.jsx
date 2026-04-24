@@ -34,6 +34,7 @@ const sortOptions = [
 ];
 
 function App() {
+  // Collection query state drives the backend API request.
   const [artworks, setArtworks] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -41,6 +42,8 @@ function App() {
   const [search, setSearch] = useState('');
   const [classification, setClassification] = useState('');
   const [sort, setSort] = useState('');
+
+  // Form state is reused by both add and edit modal flows.
   const [formData, setFormData] = useState(emptyArtwork);
   const [formError, setFormError] = useState('');
   const [loading, setLoading] = useState(true);
@@ -50,6 +53,7 @@ function App() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [activePage, setActivePage] = useState('home');
 
+  // Fetch the current page from the backend whenever filters, sort, or page changes.
   useEffect(() => {
     const fetchArtworks = async () => {
       try {
@@ -79,6 +83,7 @@ function App() {
     fetchArtworks();
   }, [currentPage, search, classification, sort]);
 
+  // Reset modal state after successful submit, cancel, or close.
   const resetForm = useCallback(() => {
     setEditingId(null);
     setFormData(emptyArtwork);
@@ -90,6 +95,7 @@ function App() {
     setIsFormOpen(false);
   }, [resetForm]);
 
+  // Let users close the modal with Escape as well as the close/cancel buttons.
   useEffect(() => {
     if (!isFormOpen) return undefined;
 
@@ -111,6 +117,7 @@ function App() {
     return artist || 'Unknown artist';
   };
 
+  // Keep form fields controlled so edit mode can populate existing artwork data.
   const updateFormField = (field, value) => {
     setFormData((current) => ({ ...current, [field]: value }));
   };
@@ -132,6 +139,7 @@ function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  // Populate the modal with the selected artwork before switching into edit mode.
   const handleEdit = (artwork) => {
     setEditingId(artwork._id);
     setFormData({
@@ -146,6 +154,7 @@ function App() {
     setIsFormOpen(true);
   };
 
+  // Validate input locally, then send either a POST or PUT request to the API.
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -193,12 +202,14 @@ function App() {
     }
   };
 
+  // Search only runs when the form is submitted, not on every key press.
   const handleSearchSubmit = (event) => {
     event.preventDefault();
     setSearch(searchInput.trim());
     setCurrentPage(1);
   };
 
+  // Delete uses a per-card loading state so repeated clicks cannot duplicate requests.
   const deleteArtwork = async (id) => {
     const confirmDelete = globalThis.confirm('Are you sure you want to delete this artwork?');
     if (!confirmDelete) return;
@@ -251,6 +262,7 @@ function App() {
 
       <main className="catalogue-shell" id="top">
         {activePage === 'about' ? (
+          // About view explains the application and supports the assignment brief.
           <section className="about-page" aria-labelledby="about-title">
             <p className="eyebrow">About the catalogue</p>
             <h1 id="about-title">A local MoMA collection browser</h1>
@@ -289,6 +301,7 @@ function App() {
           </section>
         ) : (
           <>
+            {/* Hero and controls for the catalogue view. */}
             <section className="catalogue-hero" id="about">
               <div className="hero-content">
                 <p className="eyebrow">Museum collection</p>
@@ -370,6 +383,7 @@ function App() {
             {error && <p className="status-message error">{error}</p>}
 
             {!loading && !error && (
+              // Collection results are rendered from the backend response.
               <section id="collection">
                 <div className="results-bar">
                   <p>
