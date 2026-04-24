@@ -90,7 +90,7 @@ router.delete('/:id', async (req, res) => {
         if (!deletedArtwork) {
             return res.status(404).json({ message: 'Artwork not found' });
         }
-        res.json({ message: 'Artwork deleted' });
+        res.json({ message: 'Artwork deleted successfully' });
     } catch (err) {
         // Handle errors and send appropriate response
         res.status(500).json({ message: err.message });

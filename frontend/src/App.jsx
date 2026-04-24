@@ -12,6 +12,7 @@ function App() {
   const [classification, setClassification] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [deletingId, setDeletingId] = useState('');
 
   const classifications = [
     { value: '', label: 'All classifications' },
@@ -69,10 +70,26 @@ function App() {
     return artist || 'Unknown artist';
   };
 
+  const deleteArtwork = async (id) => {
+    const confirmDelete = window.confirm('Are you sure you want to delete this artwork?');
+    if (!confirmDelete) return;
+
+    try{
+      setDeletingId(id);
+      await axios.delete(`/api/artworks/${id}`);
+      setArtworks((prevArtworks) => prevArtworks.filter((artwork) => artwork._id !== id));
+    } catch (err) {
+      console.error('Error deleting artwork:', err);
+    } finally {
+      setDeletingId('');
+    }
+  };
+
   return (
     <main className="catalogue-shell">
       <section className="catalogue-hero">
         <div>
+          <img className="moma-logo" src="/moma-logo.svg" alt="MoMA The Museum of Modern Art" />
           <p className="eyebrow">Museum collection</p>
           <h1>MoMA Art Catalogue</h1>
           <p className="hero-copy">
@@ -136,7 +153,12 @@ function App() {
         <>
           <div className="results-bar">
             <p>
-              Showing <strong>{artworks.length}</strong> artworks on page <strong>{currentPage}</strong> of <strong>{totalPages}</strong>.
+              <span>
+                Showing <strong>{artworks.length}</strong> artworks
+              </span>
+              <span>
+                Page <strong>{currentPage}</strong> of <strong>{totalPages}</strong>
+              </span>
             </p>
           </div>
 
@@ -165,6 +187,16 @@ function App() {
                       <dd>{artwork.Medium || 'Not listed'}</dd>
                     </div>
                   </dl>
+                </div>
+                <div className="card-actions">
+                  <button
+                    className="delete-button"
+                    type="button"
+                    disabled={deletingId === artwork._id}
+                    onClick={() => deleteArtwork(artwork._id)}
+                  >
+                    {deletingId === artwork._id ? 'Deleting...' : 'Delete'}
+                  </button>
                 </div>
               </article>
             ))}
