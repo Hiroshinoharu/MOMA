@@ -2,7 +2,7 @@
 
 const mongoose = require('mongoose');
 const Artwork = require('./models/Artwork'); // Import the Artwork model
-const data = require('../data/artswork_1000.json'); // Import the JSON data
+const data = require('../data/Artworks.json'); // Import the JSON data
 
 // Set up environment variables
 require('dotenv').config();

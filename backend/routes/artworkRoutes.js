@@ -10,7 +10,7 @@ const Artwork = require('../models/Artwork');
 // CREATE a new artwork
 router.post('/', async (req, res) => {
     const artwork = new Artwork(req.body);
-    try {
+    try{
         const savedArtwork = await artwork.save();
         res.status(201).json(savedArtwork);
     } catch (err) {
@@ -21,8 +21,34 @@ router.post('/', async (req, res) => {
 // READ all artworks
 router.get('/', async (req, res) => {
     try {
-        const artworks = await Artwork.find();
-        res.json(artworks);
+        // Implement pagination
+        const page = parseInt(req.query.page, 10) || 1;
+        const limit = parseInt(req.query.limit, 10) || 20;
+
+        // Implement search functionality
+        const search = req.query.search || '';
+
+        // Calculate the skip value for pagination
+        const skip = (page - 1) * limit;
+
+        // Define the search query
+        const query = {
+            Title: { $regex: search, $options: 'i' } // Case-insensitive search on Title field
+        };
+
+        // Fetch artworks based on search query and pagination
+        const artworks = await Artwork.find(query)
+            .skip(skip)
+            .limit(limit);
+
+        const totalArtworks = await Artwork.countDocuments();
+
+        res.json({
+            artworks,
+            currentPage: page,
+            totalPages: Math.ceil(totalArtworks / limit),
+            totalArtworks
+        });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
@@ -50,6 +76,7 @@ router.delete('/:id', async (req, res) => {
         }
         res.json({ message: 'Artwork deleted' });
     } catch (err) {
+        // Handle errors and send appropriate response
         res.status(500).json({ message: err.message });
     }
 });

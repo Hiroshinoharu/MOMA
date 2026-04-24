@@ -19,3 +19,6 @@ pnpm-debug.log*
 # OS/editor files
 .DS_Store
 .vscode/
+
+# Large source dataset
+data/Artworks.json
