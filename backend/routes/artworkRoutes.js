@@ -7,8 +7,49 @@ const express = require('express');
 const router = express.Router();
 const Artwork = require('../models/Artwork');
 
-// CREATE a new artwork
+const validateArtwork = (body) => {
+    const errors = [];
+
+    if (!body.Title?.trim?.()) {
+        errors.push('Title is required');
+    }
+
+    const hasArtistArray = Array.isArray(body.Artist) && body.Artist.some((artist) => String(artist).trim());
+    const hasArtistString = typeof body.Artist === 'string' && body.Artist.trim();
+    if (!hasArtistArray && !hasArtistString) {
+        errors.push('Artist is required');
+    }
+
+    if (!body.Date || !String(body.Date).trim()) {
+        errors.push('Date is required');
+    }
+
+    if (!body.Medium?.trim?.()) {
+        errors.push('Medium is required');
+    }
+
+    if (body.ImageURL && !/^https?:\/\/.+/i.test(body.ImageURL)) {
+        errors.push('Image URL must start with http:// or https://');
+    }
+
+    return errors;
+};
+
+const sortOptions = {
+    'title-asc': { Title: 1 },
+    'title-desc': { Title: -1 },
+    'date-asc': { Date: 1 },
+    'date-desc': { Date: -1 },
+    'artist-asc': { Artist: 1 },
+};
+
+// CREATE a new artwork to add to the database
 router.post('/', async (req, res) => {
+    const errors = validateArtwork(req.body);
+    if (errors.length > 0) {
+        return res.status(400).json({ message: errors.join(', ') });
+    }
+
     const artwork = new Artwork(req.body);
     try{
         const savedArtwork = await artwork.save();
@@ -31,6 +72,8 @@ router.get('/', async (req, res) => {
         // Classification filter (optional)
         const classification = req.query.classification || '';
 
+        const sort = sortOptions[req.query.sort] || {};
+
         // Calculate the skip value for pagination
         const skip = (page - 1) * limit;
 
@@ -52,6 +95,7 @@ router.get('/', async (req, res) => {
 
         // Fetch artworks based on search query and pagination
         const artworks = await Artwork.find(query)
+            .sort(sort)
             .skip(skip)
             .limit(limit);
 
@@ -72,6 +116,11 @@ router.get('/', async (req, res) => {
 
 // UPDATE an artwork by ID
 router.put('/:id', async (req, res) => {
+    const errors = validateArtwork(req.body);
+    if (errors.length > 0) {
+        return res.status(400).json({ message: errors.join(', ') });
+    }
+
     try {
         const updatedArtwork = await Artwork.findByIdAndUpdate(req.params.id, req.body, { new: true });
         if (!updatedArtwork) {
