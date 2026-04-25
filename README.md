@@ -19,6 +19,12 @@ Full-stack artwork catalogue built with React, Vite, Node.js, Express, MongoDB, 
 - npm
 - Local MongoDB running on port `27017`
 
+If MongoDB is installed with Homebrew, it can usually be started with:
+
+```bash
+brew services start mongodb/brew/mongodb-community
+```
+
 ## Install
 
 Install backend dependencies:
@@ -69,14 +75,14 @@ The seed script connects to the database from `MONGODB_URI`, clears the existing
 
 Start MongoDB first.
 
-Start the backend:
+In one terminal, start the backend:
 
 ```bash
 cd backend
 npm run dev
 ```
 
-Start the frontend:
+In a second terminal, start the frontend:
 
 ```bash
 cd frontend
