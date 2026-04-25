@@ -255,7 +255,9 @@ function App() {
           <button
             className={activePage === 'about' ? 'active' : ''}
             type="button"
-            onClick={() => showPage('about')}
+            onClick={() => {
+              window.location.href = 'http://localhost:5050/about';
+            }}
           >
             About this page
           </button>
