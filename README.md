@@ -44,6 +44,27 @@ MONGODB_URI=mongodb://localhost:27017/moma
 PORT=5050
 ```
 
+## Seed the Database
+
+Before running the app for the first time, seed MongoDB with the MoMA artwork data.
+
+Make sure the large dataset file exists locally at:
+
+```text
+data/Artworks.json
+```
+
+This file is not committed to GitHub because it is larger than GitHub's file size limit.
+
+Start MongoDB, then run the seed file from the backend folder:
+
+```bash
+cd backend
+node seed.js
+```
+
+The seed script connects to the database from `MONGODB_URI`, clears the existing artwork records, and imports the records from `data/Artworks.json`.
+
 ## Run
 
 Start MongoDB first.
@@ -76,4 +97,4 @@ http://localhost:5050/about
 
 ## Dataset
 
-The app uses MoMA artwork data imported into MongoDB. The large source file `data/Artworks.json` is ignored by Git because it exceeds GitHub's file size limit.
+The app uses MoMA artwork data imported into MongoDB. The large source file `data/Artworks.json` is ignored by Git because it exceeds GitHub's file size limit, so it must be kept locally and seeded before the catalogue will show records.
