@@ -209,6 +209,18 @@ function App() {
     setCurrentPage(1);
   };
 
+  const handleSearchInputChange = (event) => {
+    const value = event.target.value;
+    setSearchInput(value);
+
+    // The browser search-field X clears the input without submitting the form.
+    // When that happens, clear the active API search as well.
+    if (value === '' && search) {
+      setSearch('');
+      setCurrentPage(1);
+    }
+  };
+
   // Delete uses a per-card loading state so repeated clicks cannot duplicate requests.
   const deleteArtwork = async (id) => {
     const confirmDelete = globalThis.confirm('Are you sure you want to delete this artwork?');
@@ -320,7 +332,7 @@ function App() {
                   type="search"
                   placeholder="Search by title, artist, medium..."
                   value={searchInput}
-                  onChange={(event) => setSearchInput(event.target.value)}
+                  onChange={handleSearchInputChange}
                 />
               </label>
 
